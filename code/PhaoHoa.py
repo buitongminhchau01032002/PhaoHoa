@@ -50,21 +50,18 @@ class BulletFlyUp(): # Viên đạn bay lên trước khi nổ
 		self.y -= self.speed
 		self.speed -= A_FALL*0.1
 		# update từng chấm
-		for i in range(len(self.dots)):
-			self.dots[i].update()
+		for dot in self.dots:
+			dot.update()
 		# Xoá những chấm có kích thước <= 0
-		i = 0
-		while i < len(self.dots):
-			if self.dots[i].size <= 0:
-				self.dots.pop(i)
-			else:
-				i += 1
+		for dot in self.dots:
+			if dot.size <= 0:
+				self.dots.pop(self.dots.index(dot))
 
 	def draw(self):
 		pygame.draw.circle(DISPLAYSURF, self.color, (int(self.x), int(self.y)), int(self.size)) # Vẽ viên đạn
 		# Vẽ từng chấm
-		for i in range(len(self.dots)):
-			self.dots[i].draw()
+		for dot in self.dots:
+			dot.draw()
 		
 		
 
@@ -118,23 +115,21 @@ class FireWork(): # Quả pháo hoa
 		self.bullets = creatBullets();
 
 	def update(self):
-		for i in range(len(self.bullets)): # update từng viên đạn
-			self.bullets[i].update()
-			self.dots.append(Dot(self.bullets[i].x, self.bullets[i].y, self.bullets[i].size, self.bullets[i].color))
-		for i in range(len(self.dots)): # update từng chấm
-			self.dots[i].update()
+		for bullet in self.bullets: # update từng viên đạn
+			bullet.update()
+			self.dots.append(Dot(bullet.x, bullet.y, bullet.size, bullet.color))
+		for dot in self.dots: # update từng chấm
+			dot.update()
 		# Xoá những chấm có kích thước <= 0
-		i = 0
-		while i < len(self.dots):
-			if self.dots[i].size <= 0:
-				self.dots.pop(i)
-			else:
-				i += 1
+		for dot in self.dots:
+			if dot.size <= 0:
+				self.dots.pop(self.dots.index(dot))
+
 	def draw(self):
-		for i in range(len(self.bullets)): # Vẽ từng viên đạn
-			self.bullets[i].draw()
-		for i in range(len(self.dots)): # Vẽ từng chấm
-			self.dots[i].draw()
+		for bullet in self.bullets: # Vẽ từng viên đạn
+			bullet.draw()
+		for dot in self.dots: # Vẽ từng chấm
+			dot.draw()
 
 class Random():
 	def __init__(self):
@@ -183,28 +178,23 @@ def main():
 			for i in range(Random.num_fireworks()):
 				bulletFlyUps.append(BulletFlyUp(Random.randomBulletFlyUp_speed(), Random.randomBulletFlyUp_x()))
 
-		for i in range(len(bulletFlyUps)): 
-			bulletFlyUps[i].draw()
-			bulletFlyUps[i].update()
+		for bulletFlyUp in bulletFlyUps: 
+			bulletFlyUp.draw()
+			bulletFlyUp.update()
 
-		for i in range(len(fireWorks)):
-			fireWorks[i].draw()
-			fireWorks[i].update()
+		for fireWork in fireWorks:
+			fireWork.draw()
+			fireWork.update()
 
-		i = 0
-		while i < len(bulletFlyUps):
-			if bulletFlyUps[i].speed <= 0: # Viên đạn bay lên đạt độ cao tối đa
-				fireWorks.append(FireWork(bulletFlyUps[i].x, bulletFlyUps[i].y)) # Tạo quả pháo ngay vị trí viên đạn
-				bulletFlyUps.pop(i) # Xoá viên đạn đó
-			else:
-				i += 1
+		for bulletFlyUp in bulletFlyUps:
+			if bulletFlyUp.speed <= 0: # Viên đạn bay lên đạt độ cao tối đa
+				fireWorks.append(FireWork(bulletFlyUp.x, bulletFlyUp.y)) # Tạo quả pháo ngay vị trí viên đạn
+				bulletFlyUps.pop(bulletFlyUps.index(bulletFlyUp)) # Xoá viên đạn đó
+		
 		# Xoá quả pháo hoa khi kích thước những viên đạn <= 0
-		i = 0
-		while i < len(fireWorks):
-			if fireWorks[i].bullets[0].size <= 0:
-				fireWorks.pop(i)
-			else:
-				i += 1
+		for fireWork in fireWorks:
+			if fireWork.bullets[0].size <= 0:
+				fireWorks.pop(fireWorks.index(fireWork))
 
 		# Đếm khoảng thời gian bắn
 		if time <= TIME_CREAT_FW:
